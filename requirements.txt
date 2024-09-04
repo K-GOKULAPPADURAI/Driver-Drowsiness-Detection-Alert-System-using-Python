@@ -3,6 +3,5 @@ imutils
 numpy
 argparse
 opencv-python
-cmake
 dlib==19.19.0
-
+pygame

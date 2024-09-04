@@ -1,5 +1,3 @@
-#python drowniness_yawn.py --webcam webcam_index
-
 from scipy.spatial import distance as dist
 from imutils.video import VideoStream
 from imutils import face_utils
@@ -11,6 +9,11 @@ import time
 import dlib
 import cv2
 import os
+from pygame import mixer
+
+mixer.init()
+sound1 = mixer.Sound('wake_up.mp3')
+sound2 = mixer.Sound('alert.mp3')
 
 def alarm(msg):
     global alarm_status
@@ -18,13 +21,13 @@ def alarm(msg):
     global saying
 
     while alarm_status:
-        print('call')
-        os.system("start wake_up.mp3")
-    if alarm_status2:
-        print('call')
+        print('Closed eyes call')
         saying = True
-        os.system("start alert.mp3")
+        sound1.play()
         saying = False
+    if alarm_status2:
+        print('Yawn call')
+        sound2.play()
 
 def eye_aspect_ratio(eye):
     A = dist.euclidean(eye[1], eye[5])
@@ -59,30 +62,27 @@ def lip_distance(shape):
     distance = abs(top_mean[1] - low_mean[1])
     return distance
 
-
 ap = argparse.ArgumentParser()
 ap.add_argument("-w", "--webcam", type=int, default=0,
                 help="index of webcam on system")
 args = vars(ap.parse_args())
 
 EYE_AR_THRESH = 0.2
-EYE_AR_CONSEC_FRAMES = 10
-YAWN_THRESH = 20
+EYE_AR_CONSEC_FRAMES = 35
+YAWN_THRESH = 30
+YAWN_CONSEC_FRAMES = 30  # New threshold for yawn detection
 alarm_status = False
 alarm_status2 = False
 saying = False
 COUNTER = 0
+YARN_FRAME = 0  # New counter for yawn frames
 
 print("-> Loading the predictor and detector...")
-#detector = dlib.get_frontal_face_detector()
-detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")    #Faster but less accurate
+detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")  # Faster but less accurate
 predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
-
 
 print("-> Starting Video Stream")
 vs = VideoStream(src=args["webcam"]).start()
-#vs= VideoStream(usePiCamera=True).start()       //For Raspberry Pi
-time.sleep(1.0)
 
 while True:
 
@@ -90,21 +90,19 @@ while True:
     frame = imutils.resize(frame, width=450)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    #rects = detector(gray, 0)
-    rects = detector.detectMultiScale(gray, scaleFactor=1.1, 
-		minNeighbors=5, minSize=(30, 30),
-		flags=cv2.CASCADE_SCALE_IMAGE)
+    rects = detector.detectMultiScale(gray, scaleFactor=1.1,
+                                      minNeighbors=5, minSize=(30, 30),
+                                      flags=cv2.CASCADE_SCALE_IMAGE)
 
-    #for rect in rects:
     for (x, y, w, h) in rects:
-        rect = dlib.rectangle(int(x), int(y), int(x + w),int(y + h))
-        
+        rect = dlib.rectangle(int(x), int(y), int(x + w), int(y + h))
+
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
 
         eye = final_ear(shape)
         ear = eye[0]
-        leftEye = eye [1]
+        leftEye = eye[1]
         rightEye = eye[2]
 
         distance = lip_distance(shape)
@@ -121,28 +119,32 @@ while True:
             COUNTER += 1
 
             if COUNTER >= EYE_AR_CONSEC_FRAMES:
-                if alarm_status == False:
+                if not alarm_status:
                     alarm_status = True
                     t = Thread(target=alarm, args=('wake up sir',))
-                    t.deamon = True
+                    t.daemon = True
                     t.start()
 
                 cv2.putText(frame, "DROWSINESS ALERT!", (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
         else:
             COUNTER = 0
             alarm_status = False
 
-        if (distance > YAWN_THRESH):
-                cv2.putText(frame, "Yawn Alert", (10, 30),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                if alarm_status2 == False and saying == False:
+        if distance > YAWN_THRESH:
+            YARN_FRAME += 1
+
+            if YARN_FRAME >= YAWN_CONSEC_FRAMES:
+                if not alarm_status2:
                     alarm_status2 = True
                     t = Thread(target=alarm, args=('take some fresh air sir',))
-                    t.deamon = True
+                    t.daemon = True
                     t.start()
+
+                cv2.putText(frame, "Yawn Alert", (10, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         else:
+            YARN_FRAME = 0
             alarm_status2 = False
 
         cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
@@ -150,8 +152,7 @@ while True:
         cv2.putText(frame, "YAWN: {:.2f}".format(distance), (300, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-
-    cv2.imshow("Frame", frame)
+    cv2.imshow("Driver Drowsiness Detection", frame)
     key = cv2.waitKey(1) & 0xFF
 
     if key == ord("q"):
