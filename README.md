@@ -1,40 +1,96 @@
-# Driver-Drowsiness-Detection-Alert-System-using-Python-
-A tool to detect the driver face recognition and alert the driver with voice commands 
 
-In this project i am used python as the running platform. The machine learning concepts are used in this project
-by the frame work named 'dlib' which is efficient tool made from the c and c++ libraries for facerecognition and face 
-land marks boundry maker(shape_predictor)(lower in process but high accurary) which takes the dat file as an label to predict 
-the landmarks of the face also we can use the xml file(faster in process but low accurary) to predict the faces
-motion by already trained model.
+# Driver Drowsiness Detection Alert System Using Python
 
-The imutils is a image and frame managing frame work by python to use the frames of the camera and process. 
-The scipy is used to calculate the both yawn and eye focus percentage by the ecludien formula(used to find the convex 
-hull of the eye) and thershold for both. 
+A tool designed to detect driver drowsiness through face recognition and alert the driver with voice commands. This project leverages Python and machine learning concepts to ensure driver safety by monitoring yawning and eye focus.
 
-Opencv is a powerful python frame work using image and video it can predicition,detection,correction. using 
-cv2 we can change the all pixels,size,quality,colour,lighting way etc...., argparse is used to suffisticate the user
-by providing them a good running command in cmd or terminal with our any mess of running the file, by the argparse
-we designed the running command for our convineince. 
+## Overview
 
-This project hardware requirements are 2.0mp(at lease), audio speaker,
-rassberypi or a system to connect the python and process the frames given by the camera. working is very simple to explain
-the camera take every 10 frames persecond each frames or checked with the given yawn and eye focus size by the given threshold 
-and give the alert by the speaker for eye alter sounds "open your eyes sir" for yawn alter sounds "take some fresh air sir".
-for quit press q.
+This project uses several powerful libraries and frameworks:
+- **dlib**: A machine learning library for face recognition and landmark prediction.
+- **imutils**: A collection of convenience functions to work with images and video frames.
+- **scipy**: Used to calculate yawning and eye focus percentages.
+- **OpenCV**: A comprehensive library for image and video processing.
+- **argparse**: Provides a command-line interface for running the project with specific parameters.
 
-The most diffuclt process to me is statisfing the requirments of the system by installing dlib library
-among most of the python version didnt supported to the dlib library and its wheel setup after the 
-long checking and searching of the correct supporting version of python and the dlib both in same 
-is python 3.8.2 with the version of dlib-19.19.0 even though we can use xml file but it is very low in 
-accurary and detection.
+### Hardware Requirements
 
+- A camera with at least 2.0 MP resolution.
+- An audio speaker for alerts.
+- A Raspberry Pi or a computer system to connect and process the frames using Python.
 
+### Project Functionality
 
-Thanking you,
-K. Gokulappadurai-B.E(CSE) going on ......
+The camera captures 10 frames per second. Each frame is checked against the defined thresholds for yawning and eye focus. Alerts are triggered via the speaker:
+- **Eye Alert**: "Open your eyes, sir."
+- **Yawn Alert**: "Take some fresh air, sir."
 
+Press `q` to quit the application.
 
-feel free to contact with me .....
-phone: 9025421765
-gmail: k.gokulappaduraikjgv@gmail.com
+### Challenges
 
+The most challenging part was installing the `dlib` library, as many Python versions do not support it directly. After extensive research, the compatible versions were identified as Python 3.8.5 and `dlib` 19.19.0. Although an XML file can be used for face detection, it is less accurate than `dlib`.
+
+## Installation Guide
+
+### Prerequisites
+
+- **Python 3.8.5**: Ensure that Python 3.8.5 is installed on your system. You can download it from the [official Python website](https://www.python.org/downloads/release/python-385/).
+
+- **Microsoft Visual Studio C++ Build Tools**: Required for compiling some of the libraries.
+    1. Download the [Microsoft Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
+    2. During installation, ensure you select the **C++ build tools** and the **Windows 10 SDK**.
+  
+### Setup Instructions
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/K-GOKULAPPADURAI/Driver-Drowsiness-Detection-Alert-System-using-Python-.git
+   cd Driver-Drowsiness-Detection-Alert-System-using-Python-
+   ```
+
+2. **Create a Virtual Environment**:
+   ```bash
+   python -m venv venv
+   ```
+
+3. **Activate the Virtual Environment**:
+   - On **Windows**:
+     ```bash
+     venv\Scripts\activate
+     ```
+   - On **macOS/Linux**:
+     ```bash
+     source venv/bin/activate
+     ```
+
+4. **Install Required Libraries**:
+   - **Install CMake**:
+     ```bash
+     pip install cmake
+     ```
+   - **Install Other Dependencies**:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+5. **Run the Application**:
+   ```bash
+   python main.py
+   ```
+
+### Additional Notes
+
+- Ensure your Python version is 3.8.5 to avoid compatibility issues, especially with `dlib`.
+- If `dlib` installation fails, verify that you have correctly installed the Microsoft Visual Studio C++ Build Tools with the necessary components.
+- You can modify thresholds and other settings directly within the `main.py` file as needed.
+
+---
+
+Thank you for using this tool. Feel free to reach out if you have any questions or need further assistance.
+
+**Contact Information:**
+
+- **Phone**: 9025421765
+- **Email**: k.gokulappaduraikjgv@gmail.com
+
+*Developed by K. Gokulappadurai, B.E (CSE) in progress...*
