@@ -46,7 +46,7 @@ The most challenging part was installing the `dlib` library, as many Python vers
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/K-GOKULAPPADURAI/Driver-Drowsiness-Detection-Alert-System-using-Python-.git
-   cd Driver-Drowsiness-Detection-Alert-System-using-Python-
+   cd Driver-Drowsiness-Detection-Alert-System-using-Python
    ```
 
 2. **Create a Virtual Environment**:
